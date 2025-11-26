@@ -158,6 +158,11 @@ footer a:hover {
 	display: block;
 }
 
+/* Header title default (dark mode) */
+.site-title {
+	color: #f9fafb;
+}
+
 /* ------------------------------------------------------------------ */
 /* GLOBAL LIGHT THEME OVERRIDES FOR HUB PAGES                         */
 /* These work when JS adds `body.theme-light` (from global-hub.js).   */
@@ -172,6 +177,10 @@ body.theme-light {
 body.theme-light .site-header {
 	background: rgba(249, 250, 251, 0.9);
 	border-bottom: 1px solid rgba(148, 163, 184, 0.6);
+}
+
+body.theme-light .site-title {
+	color: #111827;
 }
 
 body.theme-light .site-title span {
