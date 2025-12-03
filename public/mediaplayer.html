@@ -186,9 +186,10 @@
         S0LACE <span>player</span>
       </div>
       <nav class="site-nav">
-        <a href="index.html">Proxy</a>
+        <a href="index.html">Home</a>
         <a href="games.html">Games</a>
         <a href="media.html" class="active">Media</a>
+        <a href="apps.html">Apps</a>
         <a href="settings.html">Settings</a>
       </nav>
     </header>
@@ -231,8 +232,8 @@
 
       let originalSrc = null;
 
-      // We assume srcParam is already something like:
-      //   /scram/https://example.com/whatever
+      // srcParam is whatever you passed from media.html
+      // e.g. /scramjet/https://cinemaos.tech/player/157336
       if (srcParam) {
         originalSrc = decodeURIComponent(srcParam);
         const title = titleParam ? decodeURIComponent(titleParam) : originalSrc;
