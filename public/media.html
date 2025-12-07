@@ -57,7 +57,7 @@
 
       <div class="media-grid" id="media-grid">
         <!-- STATIC CARDS (kept no matter what TMDB does) -->
-        <!-- (You can add manual .media-card.static-card blocks here if you want) -->
+        <!-- Add any manual .media-card.static-card here if you want -->
       </div>
 
       <div id="media-empty" style="display:none;">
@@ -67,12 +67,12 @@
 
     <script>
       // ========== CONFIG ==========
-      // Use your TMDB v3 API key (the one that DOESN'T start with eyJ...)
-      const TMDB_KEY = "2d1351cf74f73892042699d0431b799a"; // your key
+      // TMDB v3 API key (NOT the v4 bearer token)
+      const TMDB_KEY = "2d1351cf74f73892042699d0431b799a";
 
-      // Correct TMDB image pattern: https://image.tmdb.org/t/p/<size><path>
-      const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/";
-      const TMDB_IMG_SIZE = "w600_and_h900_face"; // or w342, w500, etc.
+      // TMDB image host + size
+      const TMDB_IMG_ORIGIN = "https://image.tmdb.org/t/p/";
+      const TMDB_IMG_SIZE = "w600_and_h900_face"; // change if you want smaller
 
       const mediaSearch = document.getElementById("media-search");
       const mediaGrid = document.getElementById("media-grid");
@@ -105,7 +105,7 @@
           let src = card.dataset.src || "";
           const tmdbId = card.dataset.tmdbId;
 
-          // If no direct src but we have a TMDB id, route through cinemaos
+          // If no direct src but we have a TMDB id, route through cinemaos via Scramjet
           if (!src && tmdbId) {
             src = "/scramjet/https://cinemaos.tech/player/" + tmdbId;
           }
@@ -139,9 +139,10 @@
 
         const img = document.createElement("img");
         if (posterPath) {
-          // posterPath already starts with "/", so this builds:
-          // https://image.tmdb.org/t/p/w600_and_h900_face/xyz.jpg
-          img.src = TMDB_IMG_BASE + TMDB_IMG_SIZE + posterPath;
+          // Build upstream TMDB URL, then run it through Scramjet
+          const upstream =
+            TMDB_IMG_ORIGIN + TMDB_IMG_SIZE + posterPath; // e.g. https://image.tmdb.org/t/p/w600_and_h900_face/xyz.jpg
+          img.src = "/scramjet/" + upstream;
         } else {
           img.src = "thumbs/placeholder-poster.png"; // fallback
         }
