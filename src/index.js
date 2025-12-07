@@ -10,7 +10,7 @@ import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
 // ★★★ ADD THIS IMPORT — REQUIRED FOR PROXYING URLs ★★★
-import { handler as scramjetHandler } from "@mercuryworkshop/scramjet/handler";
+import { fastifyPlugin as scramjetPlugin } from "@mercuryworkshop/scramjet/server";
 
 const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
 
