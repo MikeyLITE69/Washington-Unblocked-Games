@@ -1,0 +1,410 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>S0LACE • TV Player</title>
+
+    <link rel="shortcut icon" content="favicon.ico" />
+    <link rel="stylesheet" href="index.css" />
+
+    <!-- BareMux + Epoxy for Scramjet backend -->
+    <script src="baremux/index.js"></script>
+    <script src="epoxy/index.js"></script>
+
+    <!-- Service worker + global stuff -->
+    <script src="register-sw.js" defer></script>
+    <script src="global-hub.js" defer></script>
+
+    <style>
+      /* layout: iframe + side panel */
+      .tv-player-layout {
+        display: flex;
+        gap: 12px;
+        align-items: stretch;
+        margin-top: 6px;
+      }
+
+      .player-frame-wrap {
+        position: relative;
+        flex: 1;
+      }
+
+      .tv-side-panel {
+        width: 220px;
+        border: 2px solid var(--border-hard);
+        background: radial-gradient(circle at top left, #101010 0, #050505 60%);
+        padding: 10px;
+        font-size: 9px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .tv-side-panel h2 {
+        margin: 0;
+        font-size: 10px;
+        text-transform: uppercase;
+      }
+
+      .tv-label {
+        font-size: 8px;
+        color: var(--fg-dim);
+        margin-bottom: 4px;
+      }
+
+      .tv-selector {
+        width: 100%;
+        padding: 4px 6px;
+        border-radius: 0;
+        border: 2px solid var(--border-hard);
+        background: #000;
+        color: var(--fg);
+        font-size: 9px;
+        font-family: inherit;
+        outline: none;
+      }
+
+      .tv-selector:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px #000, 0 0 12px rgba(0, 255, 127, 0.5);
+      }
+
+      .tv-episode-summary {
+        font-size: 8px;
+        color: var(--fg-dim);
+        line-height: 1.6;
+      }
+
+      .tv-small-btn {
+        font-size: 8px;
+        border-radius: 0;
+        border: 2px solid var(--border-hard);
+        background: #000;
+        color: var(--fg);
+        padding: 3px 8px;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      .tv-small-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        box-shadow: 0 0 14px rgba(0, 255, 127, 0.5);
+      }
+
+      .player-loading {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        font-size: 9px;
+        color: var(--fg-dim);
+        background: radial-gradient(
+          circle at top,
+          rgba(0, 0, 0, 0.95),
+          rgba(0, 0, 0, 0.98)
+        );
+        z-index: 2;
+        text-align: center;
+        padding: 16px;
+      }
+
+      .player-loading span {
+        margin-top: 6px;
+        opacity: 0.7;
+      }
+
+      @media (max-width: 800px) {
+        .tv-player-layout {
+          flex-direction: column-reverse;
+        }
+        .tv-side-panel {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="media-player-page">
+    <header class="site-header">
+      <div class="site-title">S0LACE</div>
+      <nav class="site-nav">
+        <a href="index.html">Home</a>
+        <a href="games.html">Games</a>
+        <a href="media.html" class="active">Media</a>
+        <a href="apps.html">Apps</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+    </header>
+
+    <main class="player-main">
+      <div class="player-info">
+        <div class="player-left">
+          <span id="player-title">Loading…</span>
+          <span id="player-episode-label" style="margin-left: 8px; color: var(--fg-dim);">
+            <!-- S1 · E1 goes here -->
+          </span>
+        </div>
+        <div class="player-actions">
+          <a href="media.html">← BACK TO MEDIA</a>
+          <button id="open-new-tab">OPEN IN NEW TAB</button>
+        </div>
+      </div>
+
+      <div class="tv-player-layout">
+        <div class="player-frame-wrap">
+          <div id="player-loading" class="player-loading">
+            CONNECTING TO PROXY…
+            <span id="player-loading-sub">
+              If this takes more than a few seconds, the media host or proxy might be slow.
+            </span>
+          </div>
+
+          <iframe
+            id="media-frame"
+            src="about:blank"
+            allowfullscreen
+            allow="fullscreen; picture-in-picture; encrypted-media"
+          ></iframe>
+        </div>
+
+        <!-- SIDE PANEL: SEASON / EPISODE -->
+        <aside class="tv-side-panel">
+          <h2>EPISODES</h2>
+
+          <div>
+            <div class="tv-label">Season</div>
+            <select id="season-select" class="tv-selector"></select>
+          </div>
+
+          <div>
+            <div class="tv-label">Episode</div>
+            <select id="episode-select" class="tv-selector"></select>
+          </div>
+
+          <button id="reload-episode" class="tv-small-btn">
+            LOAD EPISODE
+          </button>
+
+          <div class="tv-episode-summary" id="episode-summary">
+            Defaulting to <strong>S1 · E1</strong>.  
+            Adjust season and episode, then hit <strong>LOAD EPISODE</strong>.
+          </div>
+        </aside>
+      </div>
+
+      <div id="player-error" class="no-src" style="display:none;">
+        No TV show ID provided.
+      </div>
+    </main>
+
+    <script>
+      // ======== BUILD TV URL (YOU MUST FIX THIS IF CINEMAOS USES A DIFFERENT PATTERN) ========
+      function buildTvSrc(tmdbId, season, episode) {
+        if (!tmdbId) return "";
+        // *** IMPORTANT ***
+        // This is a GUESS. You need to open a TV episode on cinemaos in your own browser,
+        // look at the exact URL format, and then update this function to match it.
+        //
+        // Example pattern guess:
+        //   https://cinemaos.live/player/{tmdbId}?s={season}&e={episode}
+        //
+        // Proxied through Scramjet at /scram/...
+        return (
+          "/scram/https://cinemaos.live/player/" +
+          encodeURIComponent(tmdbId) +
+          "?s=" +
+          encodeURIComponent(season) +
+          "&e=" +
+          encodeURIComponent(episode)
+        );
+      }
+
+      (async () => {
+        const params = new URLSearchParams(window.location.search);
+
+        const tmdbId = params.get("id");
+        const title =
+          params.get("title") || "Untitled TV Show";
+
+        // default S1E1 if nothing passed
+        let currentSeason = parseInt(params.get("season") || "1", 10);
+        let currentEpisode = parseInt(params.get("episode") || "1", 10);
+        if (isNaN(currentSeason) || currentSeason < 1) currentSeason = 1;
+        if (isNaN(currentEpisode) || currentEpisode < 1) currentEpisode = 1;
+
+        const frame = document.getElementById("media-frame");
+        const titleEl = document.getElementById("player-title");
+        const epLabelEl = document.getElementById("player-episode-label");
+        const errorEl = document.getElementById("player-error");
+        const frameWrap = document.querySelector(".player-frame-wrap");
+        const openNewTabBtn = document.getElementById("open-new-tab");
+        const loadingEl = document.getElementById("player-loading");
+        const loadingSub = document.getElementById("player-loading-sub");
+
+        const seasonSelect = document.getElementById("season-select");
+        const episodeSelect = document.getElementById("episode-select");
+        const reloadBtn = document.getElementById("reload-episode");
+        const epSummary = document.getElementById("episode-summary");
+
+        if (titleEl) titleEl.textContent = title;
+
+        if (!tmdbId) {
+          if (frameWrap) frameWrap.style.display = "none";
+          if (errorEl) {
+            errorEl.style.display = "flex";
+            errorEl.textContent = "No TV show ID provided.";
+          }
+          return;
+        }
+
+        // Fill selects with some reasonable ranges (you can tweak these)
+        function populateSelects() {
+          seasonSelect.innerHTML = "";
+          episodeSelect.innerHTML = "";
+
+          // seasons 1–10
+          for (let s = 1; s <= 10; s++) {
+            const opt = document.createElement("option");
+            opt.value = String(s);
+            opt.textContent = "Season " + s;
+            if (s === currentSeason) opt.selected = true;
+            seasonSelect.appendChild(opt);
+          }
+
+          // episodes 1–30
+          for (let e = 1; e <= 30; e++) {
+            const opt = document.createElement("option");
+            opt.value = String(e);
+            opt.textContent = "Episode " + e;
+            if (e === currentEpisode) opt.selected = true;
+            episodeSelect.appendChild(opt);
+          }
+        }
+
+        function updateEpLabel() {
+          if (epLabelEl) {
+            epLabelEl.textContent = `S${currentSeason} · E${currentEpisode}`;
+          }
+          if (epSummary) {
+            epSummary.textContent = `Currently set to Season ${currentSeason}, Episode ${currentEpisode}.`;
+          }
+        }
+
+        // Make "open in new tab" always available
+        function openNewTabForCurrent() {
+          const src = buildTvSrc(tmdbId, currentSeason, currentEpisode);
+          if (!src) return;
+          window.open(src, "_blank");
+        }
+
+        if (openNewTabBtn) {
+          openNewTabBtn.addEventListener("click", openNewTabForCurrent);
+        }
+
+        // BareMux transport init (same idea as your movie player)
+        try {
+          const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+          const wispUrl =
+            (location.protocol === "https:" ? "wss" : "ws") +
+            "://" +
+            location.host +
+            "/wisp/";
+
+          if ((await connection.getTransport()) !== "/epoxy/index.mjs") {
+            await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+          }
+          console.log("BareMux transport ready in tvplayer tab");
+        } catch (err) {
+          console.error("Failed to init BareMux transport (tvplayer)", err);
+          if (loadingSub) {
+            loadingSub.textContent =
+              "Proxy transport failed to init. The page may still load, but some hosts will break.";
+          }
+        }
+
+        // Timeouts for loading
+        let longTimeout = setTimeout(() => {
+          if (loadingSub) {
+            loadingSub.textContent =
+              "This is taking longer than usual. The media host or proxy might be slow or timing out.";
+          }
+        }, 8000);
+
+        let hardTimeout = setTimeout(() => {
+          if (loadingEl) loadingEl.style.display = "none";
+          if (errorEl) {
+            errorEl.style.display = "flex";
+            errorEl.textContent =
+              "The episode did not finish loading. It may be blocked, down, or the proxy hit a timeout.";
+          }
+        }, 25000);
+
+        function loadCurrentEpisode() {
+          const src = buildTvSrc(tmdbId, currentSeason, currentEpisode);
+          if (!src) return;
+
+          if (loadingEl) loadingEl.style.display = "flex";
+          if (errorEl) errorEl.style.display = "none";
+
+          clearTimeout(longTimeout);
+          clearTimeout(hardTimeout);
+
+          longTimeout = setTimeout(() => {
+            if (loadingSub) {
+              loadingSub.textContent =
+                "This is taking longer than usual. The media host or proxy might be slow or timing out.";
+            }
+          }, 8000);
+
+          hardTimeout = setTimeout(() => {
+            if (loadingEl) loadingEl.style.display = "none";
+            if (errorEl) {
+              errorEl.style.display = "flex";
+              errorEl.textContent =
+                "The episode did not finish loading. It may be blocked, down, or the proxy hit a timeout.";
+            }
+          }, 25000);
+
+          frame.src = src;
+          updateEpLabel();
+        }
+
+        if (frame) {
+          frame.addEventListener("load", () => {
+            if (loadingEl) loadingEl.style.display = "none";
+            clearTimeout(longTimeout);
+            clearTimeout(hardTimeout);
+          });
+        }
+
+        // Wire selectors
+        populateSelects();
+        updateEpLabel();
+
+        seasonSelect.addEventListener("change", () => {
+          currentSeason = parseInt(seasonSelect.value, 10) || 1;
+          updateEpLabel();
+        });
+
+        episodeSelect.addEventListener("change", () => {
+          currentEpisode = parseInt(episodeSelect.value, 10) || 1;
+          updateEpLabel();
+        });
+
+        reloadBtn.addEventListener("click", () => {
+          loadCurrentEpisode();
+        });
+
+        // FIRST LOAD: default S1E1 (or whatever was passed in URL)
+        loadCurrentEpisode();
+      })();
+    </script>
+  </body>
+</html>
