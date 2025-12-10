@@ -13,7 +13,7 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// UI elements
+// UI
 const loginForm = document.getElementById("login-form");
 const signupForm = document.getElementById("signup-form");
 const loginBox = document.getElementById("login-box");
@@ -21,11 +21,12 @@ const signupBox = document.getElementById("signup-box");
 const loggedBox = document.getElementById("logged-in-box");
 const loggedEmail = document.getElementById("logged-in-email");
 
-// -------- LOGIN --------
+// ---------------- LOGIN ----------------
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const email = loginForm.login-email.value;
-  const pass = loginForm.login-pass.value;
+
+  const email = document.getElementById("login-email").value;
+  const pass = document.getElementById("login-pass").value;
 
   try {
     await signInWithEmailAndPassword(auth, email, pass);
@@ -34,11 +35,12 @@ loginForm.addEventListener("submit", async (e) => {
   }
 });
 
-// -------- SIGN UP --------
+// ---------------- SIGNUP ----------------
 signupForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const email = signupForm.signup-email.value;
-  const pass = signupForm.signup-pass.value;
+
+  const email = document.getElementById("signup-email").value;
+  const pass = document.getElementById("signup-pass").value;
 
   try {
     await createUserWithEmailAndPassword(auth, email, pass);
@@ -47,28 +49,28 @@ signupForm.addEventListener("submit", async (e) => {
   }
 });
 
-// -------- CLOUD SAVE --------
+// ---------------- CLOUD SAVE ----------------
 document.getElementById("save-cloud").addEventListener("click", async () => {
   const user = auth.currentUser;
   if (!user) return;
 
   const data = {
-    accent: localStorage.getItem("s0laceAccent"),
-    theme: localStorage.getItem("s0laceTheme"),
-    bg: localStorage.getItem("s0laceBgMode")
+    accent: localStorage.getItem("s0laceAccent") || null,
+    theme: localStorage.getItem("s0laceTheme") || null,
+    bg: localStorage.getItem("s0laceBgMode") || null
   };
 
   await setDoc(doc(db, "users", user.uid), data);
-  alert("Saved!");
+  alert("Saved to cloud!");
 });
 
-// -------- CLOUD SYNC --------
+// ---------------- CLOUD SYNC ----------------
 document.getElementById("sync-cloud").addEventListener("click", async () => {
   const user = auth.currentUser;
   if (!user) return;
 
   const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists()) return alert("No cloud data saved.");
+  if (!snap.exists()) return alert("Nothing saved in cloud!");
 
   const data = snap.data();
 
@@ -76,15 +78,15 @@ document.getElementById("sync-cloud").addEventListener("click", async () => {
   localStorage.setItem("s0laceTheme", data.theme);
   localStorage.setItem("s0laceBgMode", data.bg);
 
-  alert("Synced! Refresh page.");
+  alert("Synced — refresh the page.");
 });
 
-// -------- LOGOUT --------
+// ---------------- LOGOUT ----------------
 document.getElementById("logout-btn").addEventListener("click", () => {
   signOut(auth);
 });
 
-// -------- AUTH STATE --------
+// ---------------- AUTH STATE ----------------
 onAuthStateChanged(auth, (user) => {
   if (user) {
     loggedEmail.textContent = "Logged in as " + user.email;
