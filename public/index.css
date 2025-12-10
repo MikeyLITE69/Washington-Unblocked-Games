@@ -15,6 +15,66 @@
   --header-h: 56px;
 }
 
+/* ============================================================
+   ACCOUNT PAGE FIXES — clean inputs, correct font, normal size
+   ============================================================ */
+
+/* container around each section */
+.account-box {
+  padding: 18px;
+  border: 1px solid #262626;
+  background: rgba(0,0,0,0.35);
+  margin-bottom: 22px;
+}
+
+/* labels */
+.account-box label {
+  font-family: "Spectral", serif;
+  font-size: 11px;
+  color: var(--fg);
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* input fields */
+.account-input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  border: 2px solid var(--accent);
+  background: #0d0d0d;
+  color: #ffffff;
+  outline: none;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.account-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+/* login/signup buttons */
+.account-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 11px;
+  background: #002e1d;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.account-btn:hover {
+  background: #004f31;
+  transform: translateY(-1px);
+}
+
+
 /* NAVIGATION FIXES — ALIGN ICON WITH TEXT */
 .site-nav a.account-link {
   display: flex;
