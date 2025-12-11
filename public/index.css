@@ -773,7 +773,7 @@ h1::after {
 .app-grid,
 .media-grid {
   display: grid;
-  grid-template-columns: repeat(8, 2fr);
+  grid-template-columns: repeat(6, 2fr);
   gap: 14px;
 }
 
