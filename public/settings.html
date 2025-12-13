@@ -7,55 +7,65 @@
 
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="stylesheet" href="index.css" />
+
   <script src="global-hub.js" defer></script>
   <script src="register-sw.js" defer></script>
 
   <style>
     .settings-grid {
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:16px;
-      margin-bottom:30px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 30px;
     }
-    @media(max-width:1000px){.settings-grid{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:700px){.settings-grid{grid-template-columns:1fr}}
 
-    .settings-panel{
-      border:2px solid var(--border-hard);
-      background:var(--panel);
-      padding:16px;
-      box-shadow:0 0 0 1px #000,0 0 20px rgba(0,0,0,.7);
-      font-family:"Press Start 2P";
-      font-size:10px;
+    @media (max-width: 1000px) {
+      .settings-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    .settings-title{
-      color:var(--accent);
-      margin-bottom:12px;
-      text-shadow:0 0 6px var(--accent);
+    @media (max-width: 700px) {
+      .settings-grid { grid-template-columns: 1fr; }
     }
-    .settings-input,.settings-select{
-      width:100%;
-      padding:6px 8px;
-      margin-top:4px;
-      border:2px solid var(--border-hard);
-      background:#000;
-      color:var(--fg);
-      font-family:"Press Start 2P";
-      font-size:9px;
+
+    .settings-panel {
+      border: 2px solid var(--border-hard);
+      background: var(--panel);
+      padding: 16px;
+      font-family: "Press Start 2P";
+      font-size: 10px;
     }
-    .settings-btn{
-      width:100%;
-      margin-top:8px;
-      padding:6px 10px;
-      border:2px solid var(--accent);
-      background:var(--accent-soft);
-      font-family:"Press Start 2P";
-      font-size:9px;
-      color:var(--accent);
-      cursor:pointer;
+
+    .settings-title {
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-shadow: 0 0 6px var(--accent);
     }
-    .settings-btn:hover{
-      box-shadow:0 0 14px var(--accent);
+
+    .settings-input,
+    .settings-select {
+      width: 100%;
+      padding: 6px;
+      margin-top: 6px;
+      border: 2px solid var(--border-hard);
+      background: #000;
+      color: var(--fg);
+      font-family: "Press Start 2P";
+      font-size: 9px;
+    }
+
+    .settings-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 6px;
+      border: 2px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: "Press Start 2P";
+      font-size: 9px;
+      cursor: pointer;
+    }
+
+    .settings-btn:hover {
+      box-shadow: 0 0 10px var(--accent);
     }
   </style>
 </head>
@@ -79,6 +89,7 @@
     <!-- TAB CLOAKING -->
     <section class="settings-panel">
       <div class="settings-title">TAB CLOAKING</div>
+
       <select id="cloak-select" class="settings-select">
         <option value="">SELECT…</option>
         <option value="drive">GOOGLE DRIVE</option>
@@ -88,24 +99,26 @@
         <option value="custom">CUSTOM</option>
       </select>
 
-      <div id="custom-cloak" style="display:none;margin-top:12px">
-        <input id="cloak-title" class="settings-input" placeholder="Title">
-        <input id="cloak-icon" class="settings-input" placeholder="Favicon URL">
-        <button class="settings-btn" id="apply-cloak">APPLY</button>
-        <button class="settings-btn" id="reset-cloak">RESET</button>
+      <div id="cloak-custom" style="display:none;">
+        <input id="cloak-title" class="settings-input" placeholder="Custom Title" />
+        <input id="cloak-icon" class="settings-input" placeholder="Favicon URL" />
+        <button class="settings-btn" id="cloak-apply">APPLY</button>
       </div>
+
+      <button class="settings-btn" id="cloak-reset">RESET</button>
     </section>
 
     <!-- APPEARANCE -->
     <section class="settings-panel">
       <div class="settings-title">APPEARANCE</div>
+
       <select id="theme-select" class="settings-select">
         <option value="dark">DARK</option>
         <option value="baby">BLUE</option>
         <option value="xmas">GREEN</option>
       </select>
 
-      <select id="accent-select" class="settings-select" style="margin-top:12px">
+      <select id="accent-select" class="settings-select">
         <option value="green">GREEN</option>
         <option value="violet">VIOLET</option>
         <option value="amber">AMBER</option>
@@ -116,27 +129,37 @@
     <!-- BACKGROUND -->
     <section class="settings-panel">
       <div class="settings-title">BACKGROUND</div>
+
       <select id="bg-mode" class="settings-select">
         <option value="default">DEFAULT</option>
-        <option value="gif-stars">STARRY</option>
+        <option value="gif-stars">STARRY GIF</option>
         <option value="custom">CUSTOM</option>
       </select>
-      <input id="bg-url" class="settings-input" placeholder="Image URL" style="display:none">
+
+      <input id="bg-url" class="settings-input" placeholder="Image URL" />
     </section>
 
     <!-- SECURITY -->
     <section class="settings-panel">
       <div class="settings-title">SECURITY</div>
-      <label><input type="checkbox" id="anti-close"> ANTI-CLOSE</label>
-      <button class="settings-btn" id="blank-launch">ABOUT:BLANK</button>
+
+      <label>
+        <input type="checkbox" id="anti-close-toggle" />
+        ENABLE ANTI-CLOSE
+      </label>
+
+      <button class="settings-btn" id="blank-launch">
+        LAUNCH ABOUT:BLANK
+      </button>
     </section>
 
-    <!-- SAVE / LOAD -->
+    <!-- SAVE / IMPORT -->
     <section class="settings-panel">
       <div class="settings-title">SAVE / LOAD</div>
-      <button class="settings-btn" id="export">EXPORT SAVE</button>
-      <input type="file" id="import" hidden>
-      <button class="settings-btn" id="import-btn">IMPORT SAVE</button>
+
+      <button class="settings-btn" id="export-settings">EXPORT SETTINGS</button>
+      <input type="file" id="import-file" hidden />
+      <button class="settings-btn" id="import-settings">IMPORT SETTINGS</button>
     </section>
 
     <!-- INFO -->
@@ -149,66 +172,81 @@
 </main>
 
 <script>
-const PRESETS={
+/* ---------- TAB CLOAK ---------- */
+const PRESETS = {
   drive:{title:"My Drive - Google Drive",iconHref:"https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png"},
   schoology:{title:"Schoology",iconHref:"https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/favicon.ico"},
   docs:{title:"Google Docs",iconHref:"https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico"},
   google:{title:"Google",iconHref:"favicon.ico"}
 };
 
-const qs=id=>document.getElementById(id);
+const select = document.getElementById("cloak-select");
+const customBox = document.getElementById("cloak-custom");
 
-qs("cloak-select").onchange=e=>{
-  const v=e.target.value;
-  qs("custom-cloak").style.display=v==="custom"?"block":"none";
-  if(PRESETS[v]){
-    S0LACE.applyTabCloak({enabled:true,...PRESETS[v]},true);
-    localStorage.setItem("s0laceTabCloak",JSON.stringify({enabled:true,...PRESETS[v]}));
-  }
+select.onchange = () => {
+  const v = select.value;
+  customBox.style.display = v === "custom" ? "block" : "none";
+  if (PRESETS[v]) applyCloak(PRESETS[v]);
 };
 
-qs("apply-cloak").onclick=()=>{
-  const cfg={enabled:true,title:qs("cloak-title").value,iconHref:qs("cloak-icon").value};
+function applyCloak(cfg){
+  cfg.enabled = true;
   S0LACE.applyTabCloak(cfg,true);
   localStorage.setItem("s0laceTabCloak",JSON.stringify(cfg));
+}
+
+document.getElementById("cloak-apply").onclick = () => {
+  applyCloak({
+    title: cloak-title.value,
+    iconHref: cloak-icon.value
+  });
 };
 
-qs("reset-cloak").onclick=()=>{
+document.getElementById("cloak-reset").onclick = () => {
   S0LACE.clearTabCloak(true);
   localStorage.removeItem("s0laceTabCloak");
 };
 
-qs("theme-select").onchange=e=>S0LACE.applyTheme(e.target.value,true);
-qs("accent-select").onchange=e=>S0LACE.applyAccent(e.target.value,true);
+/* ---------- APPEARANCE ---------- */
+theme-select.onchange = e => S0LACE.applyTheme(e.target.value,true);
+accent-select.onchange = e => S0LACE.applyAccent(e.target.value,true);
 
-qs("bg-mode").onchange=e=>{
-  qs("bg-url").style.display=e.target.value==="custom"?"block":"none";
-  S0LACE.applyBackground(e.target.value,qs("bg-url").value,true);
+/* ---------- BACKGROUND ---------- */
+bg-mode.onchange = () => {
+  S0LACE.applyBackground(bg-mode.value,bg-url.value,true);
 };
 
-qs("anti-close").checked=localStorage.getItem("s0laceAntiClose")==="1";
-qs("anti-close").onchange=e=>{
-  e.target.checked?S0LACE.enableAntiClose():S0LACE.disableAntiClose();
+/* ---------- SECURITY ---------- */
+anti-close-toggle.checked = localStorage.getItem("s0laceAntiClose")==="1";
+anti-close-toggle.onchange = e =>
+  e.target.checked ? S0LACE.enableAntiClose() : S0LACE.disableAntiClose();
+
+blank-launch.onclick = () => {
+  const w = window.open("about:blank","_blank");
+  w.document.write(`
+    <style>html,body,iframe{margin:0;width:100%;height:100%;border:0}</style>
+    <iframe src="${location.origin}/index.html"></iframe>
+  `);
 };
 
-qs("blank-launch").onclick=()=>{
-  const w=window.open("about:blank");
-  if(w) w.document.write(`<iframe src="${location.origin}/index.html" style="border:none;width:100vw;height:100vh"></iframe>`);
-};
-
-qs("export").onclick=()=>{
-  const data={...localStorage};
-  const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="s0lace-save.json";
+/* ---------- EXPORT / IMPORT ---------- */
+export-settings.onclick = () => {
+  const data = JSON.stringify(localStorage,null,2);
+  const blob = new Blob([data],{type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "s0lace-settings.json";
   a.click();
 };
 
-qs("import-btn").onclick=()=>qs("import").click();
-qs("import").onchange=e=>{
-  const r=new FileReader();
-  r.onload=()=>{const d=JSON.parse(r.result);Object.keys(d).forEach(k=>localStorage.setItem(k,d[k]));location.reload();};
+import-settings.onclick = () => import-file.click();
+import-file.onchange = e => {
+  const r = new FileReader();
+  r.onload = () => {
+    const data = JSON.parse(r.result);
+    Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));
+    location.reload();
+  };
   r.readAsText(e.target.files[0]);
 };
 </script>
