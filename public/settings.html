@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>S0LACE • Settings</title>
+  <title>Pr0ject Washington • Settings</title>
 
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="stylesheet" href="index.css" />
@@ -67,7 +67,7 @@
 
 <body>
 <header class="site-header">
-  <div class="site-title">S0LACE</div>
+  <div class="site-title">Pr0ject Washington</div>
   <nav class="site-nav">
     <a href="index.html">Home</a>
     <a href="games.html">Games</a>
@@ -170,13 +170,13 @@
 (function () {
   // Wait until DOM exists
   document.addEventListener("DOMContentLoaded", () => {
-    // Wait until global-hub has created window.S0LACE (because it's defer)
-    const waitForS0LACE = (tries = 0) => {
-      if (window.S0LACE) return init();
-      if (tries > 200) return console.error("S0LACE API never loaded (global-hub.js not running).");
-      setTimeout(() => waitForS0LACE(tries + 1), 25);
+    // Wait until global-hub has created window.Pr0ject Washington (because it's defer)
+    const waitForPr0ject Washington = (tries = 0) => {
+      if (window.Pr0ject Washington) return init();
+      if (tries > 200) return console.error("Pr0ject Washington API never loaded (global-hub.js not running).");
+      setTimeout(() => waitForPr0ject Washington(tries + 1), 25);
     };
-    waitForS0LACE();
+    waitForPr0ject Washington();
   });
 
   function init() {
@@ -211,8 +211,8 @@
 
     function applyCloak(cfg) {
       cfg.enabled = true;
-      window.S0LACE.applyTabCloak(cfg, true);
-      localStorage.setItem("s0laceTabCloak", JSON.stringify(cfg));
+      window.Pr0ject Washington.applyTabCloak(cfg, true);
+      localStorage.setItem("Pr0ject WashingtonTabCloak", JSON.stringify(cfg));
     }
 
     cloakSelect.addEventListener("change", () => {
@@ -229,37 +229,37 @@
     });
 
     cloakReset.addEventListener("click", () => {
-      window.S0LACE.clearTabCloak(true);
-      localStorage.removeItem("s0laceTabCloak");
+      window.Pr0ject Washington.clearTabCloak(true);
+      localStorage.removeItem("Pr0ject WashingtonTabCloak");
       cloakSelect.value = "";
       cloakCustom.style.display = "none";
     });
 
     /* ---------- APPEARANCE ---------- */
     themeSelect.addEventListener("change", e =>
-      window.S0LACE.applyTheme(e.target.value, true)
+      window.Pr0ject Washington.applyTheme(e.target.value, true)
     );
 
     accentSelect.addEventListener("change", e =>
-      window.S0LACE.applyAccent(e.target.value, true)
+      window.Pr0ject Washington.applyAccent(e.target.value, true)
     );
 
     /* ---------- BACKGROUND ---------- */
     bgMode.addEventListener("change", () => {
-      window.S0LACE.applyBackground(bgMode.value, bgUrl.value, true);
+      window.Pr0ject Washington.applyBackground(bgMode.value, bgUrl.value, true);
     });
 
     bgUrl.addEventListener("blur", () => {
       if (bgMode.value === "custom") {
-        window.S0LACE.applyBackground("custom", bgUrl.value, true);
+        window.Pr0ject Washington.applyBackground("custom", bgUrl.value, true);
       }
     });
 
     /* ---------- SECURITY ---------- */
-    antiClose.checked = (localStorage.getItem("s0laceAntiClose") === "1");
+    antiClose.checked = (localStorage.getItem("Pr0ject WashingtonAntiClose") === "1");
 
     antiClose.addEventListener("change", e => {
-      e.target.checked ? window.S0LACE.enableAntiClose() : window.S0LACE.disableAntiClose();
+      e.target.checked ? window.Pr0ject Washington.enableAntiClose() : window.Pr0ject Washington.disableAntiClose();
     });
 
     blankBtn.addEventListener("click", () => {
@@ -296,7 +296,7 @@
       const blob = new Blob([data], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "s0lace-settings.json";
+      a.download = "Pr0ject Washington-settings.json";
       a.click();
       URL.revokeObjectURL(a.href);
     });
