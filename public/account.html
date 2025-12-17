@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>S0LACE • Account</title>
+  <title>Pr0ject Washington • Account</title>
 
   <link rel="stylesheet" href="index.css">
   <script src="global-hub.js" defer></script>
@@ -71,7 +71,7 @@
 <body>
 
 <header class="site-header">
-  <div class="site-title">S0LACE</div>
+  <div class="site-title">Pr0ject Washington</div>
   <nav class="site-nav">
     <a href="index.html">Home</a>
     <a href="games.html">Games</a>
@@ -125,8 +125,8 @@
    SIMPLE LOCAL ACCOUNT SYSTEM (USERNAME ONLY)
    ========================================================= */
 
-const KEY_USER = "s0lace_user";
-const KEY_PROFILE = "s0lace_profile";
+const KEY_USER = "Pr0ject Washington_user";
+const KEY_PROFILE = "Pr0ject Washington_profile";
 
 /* UI Elements */
 const loginBox = document.getElementById("login-box");
@@ -205,10 +205,10 @@ document.getElementById("export-profile").addEventListener("click", () => {
     user: localStorage.getItem(KEY_USER),
     profile: JSON.parse(localStorage.getItem(KEY_PROFILE) || "{}"),
     settings: {
-      accent: localStorage.getItem("s0laceAccent"),
-      theme: localStorage.getItem("s0laceTheme"),
-      bg: localStorage.getItem("s0laceBgMode"),
-      bgUrl: localStorage.getItem("s0laceBgUrl")
+      accent: localStorage.getItem("Pr0ject WashingtonAccent"),
+      theme: localStorage.getItem("Pr0ject WashingtonTheme"),
+      bg: localStorage.getItem("Pr0ject WashingtonBgMode"),
+      bgUrl: localStorage.getItem("Pr0ject WashingtonBgUrl")
     }
   };
 
@@ -239,11 +239,11 @@ document.getElementById("import-file").addEventListener("change", e => {
       localStorage.setItem(KEY_PROFILE, JSON.stringify(data.profile || {}));
 
       if (data.settings) {
-        localStorage.setItem("s0laceAccent", data.settings.accent || "green");
-        localStorage.setItem("s0laceTheme", data.settings.theme || "dark");
-        localStorage.setItem("s0laceBgMode", data.settings.bg || "default");
+        localStorage.setItem("Pr0ject WashingtonAccent", data.settings.accent || "green");
+        localStorage.setItem("Pr0ject WashingtonTheme", data.settings.theme || "dark");
+        localStorage.setItem("Pr0ject WashingtonBgMode", data.settings.bg || "default");
         if (data.settings.bgUrl)
-          localStorage.setItem("s0laceBgUrl", data.settings.bgUrl);
+          localStorage.setItem("Pr0ject WashingtonBgUrl", data.settings.bgUrl);
       }
 
       showLoggedIn(data.user);
