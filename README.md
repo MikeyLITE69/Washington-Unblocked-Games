@@ -1,10 +1,10 @@
-# PROJECT S0LACE 🛡️
+# PROJECT WASHINGTON 🛡️
 
 **Unblocked Games, Proxy, Movies & More – Bypass restrictions at school or work.**
 
 ## 🚀 What is Project S0lace?
 
-Project S0lace is a self-hostable, open-source web proxy + entertainment hub designed for students and anyone stuck behind restrictive networks (schools, workplaces, etc.). It combines:
+Project Washington is a self-hostable, open-source web proxy + entertainment hub designed for students and anyone stuck behind restrictive networks (schools, workplaces, etc.). It combines:
 
 - Lots of unblocked HTML5/Flash-emulated games
 - Built-in web proxy (Scramjet + Titanium Network backends)
@@ -27,14 +27,8 @@ Project S0lace is a self-hostable, open-source web proxy + entertainment hub des
 
 ## 🖥️ Live Demo 
 
-https://project-s0lace.onrender.com
+https://washington-unblocked-games.onrender.com (may take a min to load)
 
-## 🚀 Quick Deploy (Free Options)
-
-### 1. Render (Recommended – Free tier)
-1. Fork this repo
-2. Go to [render.com](https://render.com) → New Web Service
-3. Connect your GitHub fork
 4. Settings:
    - Build Command: `npm install --omit=dev`
    - Start Command: `npm start`
